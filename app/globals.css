@@ -24,3 +24,9 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.rdp-payday {
+  background-color: #18181b !important;
+  color: white !important;
+  border-radius: 9999px;
+}

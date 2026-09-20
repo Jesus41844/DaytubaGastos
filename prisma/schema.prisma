@@ -1,0 +1,33 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Payday {
+  id        String   @id @default(cuid())
+  date      String   @unique // ISO "YYYY-MM-DD"
+  createdAt DateTime @default(now())
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  amountCents Int
+  concept     String
+  category    String // "personal" | "agrupacion"
+  type        String // "expense" | "income"
+  date        String // ISO "YYYY-MM-DD"
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([date])
+  @@index([category])
+}
+
+model Setting {
+  key   String @id
+  value String
+}
