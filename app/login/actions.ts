@@ -13,10 +13,11 @@ export async function loginAction(_prevState: LoginState, formData: FormData): P
     return { error: parsed.error.issues[0]?.message ?? "Contraseña inválida" };
   }
 
-  const hash = process.env.APP_PASSWORD_HASH;
-  if (!hash) {
-    return { error: "APP_PASSWORD_HASH no está configurado en el servidor" };
+  const hashB64 = process.env.APP_PASSWORD_HASH_B64;
+  if (!hashB64) {
+    return { error: "APP_PASSWORD_HASH_B64 no está configurado en el servidor" };
   }
+  const hash = Buffer.from(hashB64, "base64").toString("utf-8");
 
   const valid = await bcrypt.compare(parsed.data.password, hash);
   if (!valid) {

@@ -19,8 +19,10 @@ react-day-picker · @react-pdf/renderer · vitest.
    - la conexión **pooled** (Transaction pooler, puerto 6543) → `DATABASE_URL`
    - la conexión **directa** (puerto 5432) → `DIRECT_URL`
 2. Copia `.env.example` a `.env.local` y completa `DATABASE_URL`, `DIRECT_URL`,
-   `APP_PASSWORD_HASH` y `SESSION_SECRET` (instrucciones para generarlos están
-   en el propio archivo).
+   `APP_PASSWORD_HASH_B64` y `SESSION_SECRET` (instrucciones para generarlos
+   están en el propio archivo). `APP_PASSWORD_HASH_B64` va en base64 (no el
+   hash bcrypt directo) porque el hash trae `$` que el parser de `.env` de
+   Next.js puede corromper si se guarda tal cual.
 3. Instala dependencias y aplica el esquema:
    ```bash
    npm install
