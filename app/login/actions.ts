@@ -3,6 +3,7 @@
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
+import { getAppPasswordHash } from "@/lib/password";
 import { loginSchema } from "@/lib/validations";
 
 export type LoginState = { error?: string };
@@ -13,11 +14,13 @@ export async function loginAction(_prevState: LoginState, formData: FormData): P
     return { error: parsed.error.issues[0]?.message ?? "Contraseña inválida" };
   }
 
-  const hashB64 = process.env.APP_PASSWORD_HASH_B64;
-  if (!hashB64) {
-    return { error: "APP_PASSWORD_HASH_B64 no está configurado en el servidor" };
+  const hash = getAppPasswordHash();
+  if (!hash) {
+    return {
+      error:
+        "Falta configurar APP_PASSWORD_HASH_B64 (hash en base64) o APP_PASSWORD_HASH (hash crudo) en el servidor",
+    };
   }
-  const hash = Buffer.from(hashB64, "base64").toString("utf-8");
 
   const valid = await bcrypt.compare(parsed.data.password, hash);
   if (!valid) {
