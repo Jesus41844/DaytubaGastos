@@ -1,32 +1,142 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --deep: #0e3b34;
+  --deep-soft: #17514a;
+  --surface: #f4f6f3;
+  --card: #ffffff;
+  --sea: #2e9e8f;
+  --coral: #ff5a3c;
+  --ochre: #e9a13b;
+  --text: #11221f;
+  --text-soft: #5e716d;
+  --line: #dfe5df;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-deep: var(--deep);
+  --color-deep-soft: var(--deep-soft);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-sea: var(--sea);
+  --color-coral: var(--coral);
+  --color-ochre: var(--ochre);
+  --color-text: var(--text);
+  --color-text-soft: var(--text-soft);
+  --color-line: var(--line);
+  --font-display: var(--font-bricolage);
+  --font-sans: var(--font-instrument);
+  --font-mono: var(--font-dm-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-instrument), system-ui, sans-serif;
+  /* Instrument Sans trae el espacio entre palabras muy angosto y a tamaños
+     pequeños las palabras se leen pegadas. */
+  word-spacing: 0.08em;
 }
 
-.rdp-payday {
-  background-color: #18181b !important;
-  color: white !important;
+/* Etiquetas estructurales: marcan de qué es cada bloque, no decoran. */
+.eyebrow {
+  font-family: var(--font-dm-mono), monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+/* Cifras siempre alineadas en columna, como en un recibo. */
+.figure {
+  font-family: var(--font-dm-mono), monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Medidor de quincena: plata y tiempo sobre el mismo eje --- */
+.meter-track {
+  position: relative;
+  height: 2.75rem;
+  border-radius: 0.25rem;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.meter-fill {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  border-radius: 0.25rem 0 0 0.25rem;
+  transition: width 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Trama diagonal en la parte excedida: se lee distinto sin depender del color. */
+.meter-fill--over {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--coral),
+    var(--coral) 6px,
+    #e0472d 6px,
+    #e0472d 12px
+  );
+}
+
+.meter-today {
+  position: absolute;
+  inset-block: -0.25rem;
+  width: 2px;
+  background: #ffffff;
+}
+
+.meter-today::after {
+  content: "";
+  position: absolute;
+  top: -0.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 0.3125rem solid transparent;
+  border-right: 0.3125rem solid transparent;
+  border-top: 0.375rem solid #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meter-fill {
+    transition: none;
+  }
+}
+
+/* --- react-day-picker ---
+   Su hoja de estilos se inyecta después de este archivo, así que con la misma
+   especificidad gana la suya. La clase repetida sube la especificidad sin
+   cambiar a qué elementos apunta. */
+.rdp-root.rdp-root {
+  --rdp-accent-color: var(--deep);
+  --rdp-accent-background-color: var(--surface);
+  --rdp-today-color: var(--sea);
+  --rdp-day-height: 2.5rem;
+  --rdp-day-width: 2.5rem;
+  font-family: var(--font-instrument), system-ui, sans-serif;
+  font-size: 0.875rem;
+}
+
+/* Las flechas de navegación vienen en azul puro por defecto. */
+.rdp-root.rdp-root .rdp-chevron {
+  fill: var(--deep);
+}
+
+.rdp-root.rdp-root .rdp-payday {
+  background-color: var(--deep);
+  color: #ffffff;
   border-radius: 9999px;
+  font-weight: 600;
+}
+
+.rdp-root.rdp-root .rdp-today:not(.rdp-payday) {
+  font-weight: 600;
+  color: var(--sea);
+}
+
+*:focus-visible {
+  outline: 2px solid var(--deep);
+  outline-offset: 2px;
 }

@@ -15,7 +15,6 @@ export function PaydayCalendar({ paydayDates }: { paydayDates: string[] }) {
   return (
     <DayPicker
       locale={es}
-      defaultMonth={dates[dates.length - 1]}
       modifiers={{ payday: dates }}
       modifiersClassNames={{ payday: "rdp-payday" }}
     />

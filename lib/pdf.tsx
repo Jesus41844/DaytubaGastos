@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
 });
 
 function categoryLabel(category: string) {
-  return category === "personal" ? "Personal" : "Agrupación";
+  return category === "personal" ? "Personal" : "GREB";
 }
 
 function typeLabel(type: string) {
@@ -86,7 +86,7 @@ function PeriodPdfDocument({
           </Text>
         </View>
 
-        <Text style={styles.sectionTitle}>Recap — Agrupación</Text>
+        <Text style={styles.sectionTitle}>Recap — GREB</Text>
         <View style={styles.recapRow}>
           <Text style={styles.recapLabel}>Ingresos</Text>
           <Text style={styles.recapValue}>{formatCurrency(agrupacionRecap.incomeCents)}</Text>

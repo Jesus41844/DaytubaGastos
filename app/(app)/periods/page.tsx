@@ -9,25 +9,38 @@ export default async function PeriodsPage() {
   ]);
 
   const periods = getAllPeriods(paydays)
-    .map((period) => ({
-      period,
-      totalCents: transactions
-        .filter((t) => isDateInPeriod(t.date, period))
-        .reduce((sum, t) => sum + t.amountCents, 0),
-      count: transactions.filter((t) => isDateInPeriod(t.date, period)).length,
-    }))
+    .map((period) => {
+      const rows = transactions.filter((t) => isDateInPeriod(t.date, period));
+      return {
+        period,
+        count: rows.length,
+        spentCents: rows
+          .filter((t) => t.type === "expense")
+          .reduce((sum, t) => sum + t.amountCents, 0),
+      };
+    })
     .filter(({ period, count }) => !period.isUnassigned || count > 0)
     .reverse();
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold">Historial de quincenas</h1>
+    <div className="flex flex-col gap-5">
+      <h1 className="font-[family-name:var(--font-display)] text-3xl font-extrabold tracking-tight">
+        Quincenas
+      </h1>
+
       {periods.length === 0 ? (
-        <p className="text-sm text-zinc-500">Todavía no hay quincenas ni movimientos.</p>
+        <p className="text-sm text-[color:var(--text-soft)]">
+          Marca tu primer día de cobro en Cobros y aquí van a aparecer tus quincenas.
+        </p>
       ) : (
-        <div className="flex flex-col gap-3">
-          {periods.map(({ period, totalCents }) => (
-            <PeriodCard key={period.id} period={period} totalCents={totalCents} />
+        <div className="flex flex-col gap-2">
+          {periods.map(({ period, spentCents, count }) => (
+            <PeriodCard
+              key={period.id}
+              period={period}
+              spentCents={spentCents}
+              count={count}
+            />
           ))}
         </div>
       )}

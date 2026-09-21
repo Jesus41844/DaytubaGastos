@@ -9,21 +9,24 @@ export default async function SettingsPage() {
   const budgetCents = await getPersonalBudgetCents();
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold">Configuración</h1>
+    <div className="flex flex-col gap-5">
+      <h1 className="font-[family-name:var(--font-display)] text-3xl font-extrabold tracking-tight">
+        Ajustes
+      </h1>
 
-      <Card className="max-w-md">
-        <h2 className="mb-3 font-medium">Límite quincenal personal</h2>
-        <p className="mb-4 text-sm text-zinc-500">
-          Contra este monto se compara lo que gastas en la categoría personal en cada
-          quincena.
+      <Card>
+        <h2 className="eyebrow">Tu quincena</h2>
+        <p className="mt-3 text-sm text-[color:var(--text-soft)]">
+          Lo que cobras cada quincena. Contra este monto se mide lo que gastas de lo tuyo.
         </p>
-        <BudgetForm defaultValue={fromCents(budgetCents)} />
+        <div className="mt-4">
+          <BudgetForm defaultValue={fromCents(budgetCents)} />
+        </div>
       </Card>
 
-      <Card className="max-w-md">
-        <h2 className="mb-3 font-medium">Sesión</h2>
-        <form action={logoutAction}>
+      <Card>
+        <h2 className="eyebrow">Sesión</h2>
+        <form action={logoutAction} className="mt-3">
           <Button type="submit" variant="secondary">
             Cerrar sesión
           </Button>

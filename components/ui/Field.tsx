@@ -4,23 +4,26 @@ export function Field({
   label,
   htmlFor,
   error,
+  hint,
   children,
 }: {
   label: string;
   htmlFor: string;
   error?: string;
+  hint?: string;
   children: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={htmlFor} className="text-sm font-medium text-zinc-700">
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={htmlFor} className="text-sm font-medium text-[color:var(--text)]">
         {label}
       </label>
       {children}
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {hint && !error && <p className="text-xs text-[color:var(--text-soft)]">{hint}</p>}
+      {error && <p className="text-sm text-[color:var(--coral)]">{error}</p>}
     </div>
   );
 }
 
 export const inputClass =
-  "rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900";
+  "w-full rounded-lg border border-[color:var(--line)] bg-white px-3 py-2.5 text-sm text-[color:var(--text)] placeholder:text-[color:var(--text-soft)] focus:border-[color:var(--deep)] focus:outline-none";

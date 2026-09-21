@@ -1,93 +1,104 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
-import { findPeriodForDate, isDateInPeriod, todayISO } from "@/lib/periods";
+import { findPeriodForDate, getPeriodProgress, isDateInPeriod, todayISO } from "@/lib/periods";
 import { computeAgrupacionRecap, computePersonalRecap } from "@/lib/recap";
 import { getPersonalBudgetCents } from "@/lib/settings";
-import { formatCurrency } from "@/lib/money";
-import { Card } from "@/components/ui/Card";
+import { formatAmount, formatCurrency } from "@/lib/money";
+import { formatDayMonth } from "@/lib/dates";
+import { Card, DeepCard } from "@/components/ui/Card";
+import { QuincenaMeter } from "@/components/QuincenaMeter";
 import { TransactionTable } from "@/components/TransactionTable";
 
-function Row({ label, value, emphasis }: { label: string; value: string; emphasis?: string }) {
-  return (
-    <div className="flex justify-between">
-      <dt className="text-zinc-500">{label}</dt>
-      <dd className={emphasis ?? "font-medium"}>{value}</dd>
-    </div>
-  );
-}
-
 export default async function DashboardPage() {
+  const today = todayISO();
   const [paydays, transactions, limitCents] = await Promise.all([
     prisma.payday.findMany(),
     prisma.transaction.findMany({ orderBy: { date: "desc" } }),
     getPersonalBudgetCents(),
   ]);
 
-  const currentPeriod = findPeriodForDate(todayISO(), paydays);
-  const periodTransactions = transactions.filter((t) => isDateInPeriod(t.date, currentPeriod));
+  const period = findPeriodForDate(today, paydays);
+  const periodTransactions = transactions.filter((t) => isDateInPeriod(t.date, period));
+  const personal = computePersonalRecap(periodTransactions, limitCents);
+  const grupo = computeAgrupacionRecap(periodTransactions);
+  const progress = getPeriodProgress(period, today);
 
-  const personalRecap = computePersonalRecap(periodTransactions, limitCents);
-  const agrupacionRecap = computeAgrupacionRecap(periodTransactions);
-
-  const periodLabel = currentPeriod.isUnassigned
-    ? "Sin quincena configurada todavía"
-    : `${currentPeriod.startDate} → ${currentPeriod.endDate ?? "hoy (en curso)"}`;
+  const overspent = personal.remainingCents < 0;
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold">Quincena actual</h1>
-          <p className="text-sm text-zinc-500">{periodLabel}</p>
+      <DeepCard>
+        <p className="eyebrow !text-white/60">
+          {period.isUnassigned
+            ? "Sin quincena marcada"
+            : `Quincena · ${formatDayMonth(period.startDate as string)} — ${
+                period.endDate ? formatDayMonth(period.endDate) : "hoy"
+              }`}
+        </p>
+
+        <p className="mt-6 text-sm text-white/70">{overspent ? "Te pasaste por" : "Te queda"}</p>
+        <p className="font-[family-name:var(--font-display)] text-6xl leading-none font-extrabold tracking-tight sm:text-7xl">
+          <span className="align-top text-3xl font-bold text-white/50 sm:text-4xl">$</span>
+          {formatAmount(Math.abs(personal.remainingCents))}
+        </p>
+
+        <div className="mt-8">
+          <QuincenaMeter recap={personal} progress={progress} />
         </div>
-        <Link
-          href="/expenses/new"
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700"
-        >
-          Agregar movimiento
-        </Link>
-      </div>
+      </DeepCard>
 
-      {currentPeriod.isUnassigned && (
-        <Card className="border-amber-300 bg-amber-50 text-amber-800">
-          Todavía no registras ninguna fecha de cobro. Ve a{" "}
-          <Link href="/calendar" className="underline">
-            Calendario
-          </Link>{" "}
-          para agregar tu primera quincena.
-        </Card>
-      )}
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Card>
-          <h2 className="mb-3 font-medium">Personal</h2>
-          <dl className="flex flex-col gap-2 text-sm">
-            <Row label="Límite quincenal" value={formatCurrency(personalRecap.limitCents)} />
-            <Row label="Gastado" value={formatCurrency(personalRecap.spentCents)} />
-            <Row
-              label={personalRecap.remainingCents < 0 ? "Excedido" : "Restante"}
-              value={formatCurrency(Math.abs(personalRecap.remainingCents))}
-              emphasis={personalRecap.remainingCents < 0 ? "text-red-600 font-medium" : "text-emerald-600 font-medium"}
-            />
-          </dl>
-        </Card>
-        <Card>
-          <h2 className="mb-3 font-medium">Agrupación</h2>
-          <dl className="flex flex-col gap-2 text-sm">
-            <Row label="Ingresos" value={formatCurrency(agrupacionRecap.incomeCents)} />
-            <Row label="Gastos" value={formatCurrency(agrupacionRecap.expensesCents)} />
-            <Row
-              label="Balance"
-              value={formatCurrency(agrupacionRecap.balanceCents)}
-              emphasis={agrupacionRecap.balanceCents < 0 ? "text-red-600 font-medium" : "text-emerald-600 font-medium"}
-            />
-          </dl>
-        </Card>
-      </div>
+      <Link
+        href="/expenses/new"
+        className="flex items-center justify-center gap-2 rounded-xl bg-[color:var(--deep)] px-5 py-4 text-center font-medium text-white transition-colors hover:bg-[color:var(--deep-soft)]"
+      >
+        <span aria-hidden className="text-lg leading-none">
+          +
+        </span>
+        Anotar un gasto
+      </Link>
 
       <Card>
-        <h2 className="mb-3 font-medium">Movimientos de esta quincena</h2>
-        <TransactionTable transactions={periodTransactions} />
+        <h2 className="eyebrow">GREB</h2>
+        <dl className="mt-4 grid grid-cols-3 gap-4 text-sm">
+          <div>
+            <dt className="text-[color:var(--text-soft)]">Entró</dt>
+            <dd className="figure mt-1 text-[color:var(--sea)]">
+              {formatCurrency(grupo.incomeCents)}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[color:var(--text-soft)]">Salió</dt>
+            <dd className="figure mt-1">{formatCurrency(grupo.expensesCents)}</dd>
+          </div>
+          <div>
+            <dt className="text-[color:var(--text-soft)]">Balance</dt>
+            <dd
+              className={`figure mt-1 font-medium ${
+                grupo.balanceCents < 0 ? "text-[color:var(--coral)]" : "text-[color:var(--text)]"
+              }`}
+            >
+              {formatCurrency(grupo.balanceCents)}
+            </dd>
+          </div>
+        </dl>
+      </Card>
+
+      <Card>
+        <div className="flex items-baseline justify-between">
+          <h2 className="eyebrow">Esta quincena</h2>
+          <Link
+            href="/periods"
+            className="text-xs text-[color:var(--text-soft)] underline underline-offset-4 hover:text-[color:var(--text)]"
+          >
+            Ver todas
+          </Link>
+        </div>
+        <div className="mt-2">
+          <TransactionTable
+            transactions={periodTransactions}
+            emptyMessage="Todavía no anotas nada esta quincena. Empieza por el primer gasto."
+          />
+        </div>
       </Card>
     </div>
   );

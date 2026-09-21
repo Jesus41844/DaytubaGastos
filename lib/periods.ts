@@ -1,3 +1,5 @@
+import { todayInTimezone } from "./dates";
+
 export type PaydayInput = { id: string; date: string };
 
 export type Period = {
@@ -16,7 +18,34 @@ export function addDaysISO(dateISO: string, days: number): string {
 }
 
 export function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
+  return todayInTimezone();
+}
+
+export function diffDaysISO(from: string, to: string): number {
+  const parse = (iso: string) => {
+    const [y, m, d] = iso.split("-").map(Number);
+    return Date.UTC(y, m - 1, d);
+  };
+  return Math.round((parse(to) - parse(from)) / 86_400_000);
+}
+
+export type PeriodProgress = {
+  dayNumber: number; // día del periodo en el que cae `date` (1-indexado)
+  totalDays: number;
+  daysLeft: number; // incluye hoy
+};
+
+/**
+ * Posición de una fecha dentro del periodo. Devuelve null si el periodo no
+ * tiene cierre conocido (aún no se marcó el siguiente cobro), porque sin eso
+ * no se puede saber cuántos días abarca.
+ */
+export function getPeriodProgress(period: Period, date: string): PeriodProgress | null {
+  if (period.startDate === null || period.endDate === null) return null;
+
+  const totalDays = diffDaysISO(period.startDate, period.endDate) + 1;
+  const dayNumber = Math.min(Math.max(diffDaysISO(period.startDate, date) + 1, 1), totalDays);
+  return { dayNumber, totalDays, daysLeft: totalDays - dayNumber + 1 };
 }
 
 function sortPaydays(paydays: PaydayInput[]): PaydayInput[] {

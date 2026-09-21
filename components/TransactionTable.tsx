@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { formatCurrency } from "@/lib/money";
+import { formatAmount } from "@/lib/money";
+import { formatDayMonth } from "@/lib/dates";
 
 export type TransactionRow = {
   id: string;
@@ -12,45 +13,45 @@ export type TransactionRow = {
 
 export function TransactionTable({
   transactions,
-  editable = true,
+  emptyMessage = "Todavía no anotas nada aquí.",
 }: {
   transactions: TransactionRow[];
-  editable?: boolean;
+  emptyMessage?: string;
 }) {
   if (transactions.length === 0) {
-    return <p className="text-sm text-zinc-500">Sin movimientos.</p>;
+    return <p className="py-2 text-sm text-[color:var(--text-soft)]">{emptyMessage}</p>;
   }
 
   return (
-    <table className="w-full text-sm">
-      <thead>
-        <tr className="border-b border-zinc-200 text-left text-zinc-500">
-          <th className="py-2 pr-2 font-medium">Fecha</th>
-          <th className="py-2 pr-2 font-medium">Concepto</th>
-          <th className="py-2 pr-2 font-medium">Categoría</th>
-          <th className="py-2 pr-2 font-medium">Tipo</th>
-          <th className="py-2 pr-2 text-right font-medium">Monto</th>
-          {editable && <th className="py-2" />}
-        </tr>
-      </thead>
-      <tbody>
-        {transactions.map((t) => (
-          <tr key={t.id} className="border-b border-zinc-100">
-            <td className="py-2 pr-2 whitespace-nowrap">{t.date}</td>
-            <td className="py-2 pr-2">{t.concept}</td>
-            <td className="py-2 pr-2">{t.category === "personal" ? "Personal" : "Agrupación"}</td>
-            <td className="py-2 pr-2">{t.type === "income" ? "Ingreso" : "Gasto"}</td>
-            <td className="py-2 pr-2 text-right whitespace-nowrap">{formatCurrency(t.amountCents)}</td>
-            {editable && (
-              <td className="py-2 text-right whitespace-nowrap">
-                <Link href={`/expenses/${t.id}/edit`} className="text-zinc-500 hover:text-zinc-900">
-                  Editar
-                </Link>
-              </td>
-            )}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <ul className="divide-y divide-[color:var(--line)]">
+      {transactions.map((t) => {
+        const isIncome = t.type === "income";
+        return (
+          <li key={t.id}>
+            <Link
+              href={`/expenses/${t.id}/edit`}
+              className="flex items-baseline gap-3 py-3 transition-colors hover:bg-[color:var(--surface)]"
+            >
+              <span className="figure w-14 shrink-0 text-xs text-[color:var(--text-soft)]">
+                {formatDayMonth(t.date)}
+              </span>
+              <span className="min-w-0 flex-1 truncate text-sm">
+                {t.concept}
+                {t.category === "agrupacion" && (
+                  <span className="eyebrow ml-2 !text-[color:var(--ochre)]">GREB</span>
+                )}
+              </span>
+              <span
+                className={`figure shrink-0 text-sm ${
+                  isIncome ? "text-[color:var(--sea)]" : "text-[color:var(--text)]"
+                }`}
+              >
+                {isIncome ? "+" : "−"}${formatAmount(t.amountCents)}
+              </span>
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

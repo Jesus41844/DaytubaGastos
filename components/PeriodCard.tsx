@@ -1,18 +1,36 @@
 import Link from "next/link";
-import { Card } from "@/components/ui/Card";
 import { formatCurrency } from "@/lib/money";
+import { formatDayMonth } from "@/lib/dates";
 import { periodLabel, type Period } from "@/lib/periods";
 
-export function PeriodCard({ period, totalCents }: { period: Period; totalCents: number }) {
+export function PeriodCard({
+  period,
+  spentCents,
+  count,
+}: {
+  period: Period;
+  spentCents: number;
+  count: number;
+}) {
+  const label = period.isUnassigned
+    ? periodLabel(period)
+    : `${formatDayMonth(period.startDate as string)} — ${
+        period.endDate ? formatDayMonth(period.endDate) : "hoy"
+      }`;
+
   return (
-    <Link href={`/periods/${period.id}`}>
-      <Card className="flex items-center justify-between transition-colors hover:border-zinc-400">
-        <div>
-          <p className="font-medium">{periodLabel(period)}</p>
-          {period.isOngoing && <p className="text-xs text-emerald-600">En curso</p>}
-        </div>
-        <p className="font-medium">{formatCurrency(totalCents)}</p>
-      </Card>
+    <Link
+      href={`/periods/${period.id}`}
+      className="flex items-center justify-between rounded-xl border border-[color:var(--line)] bg-white px-5 py-4 transition-colors hover:border-[color:var(--deep)]"
+    >
+      <div>
+        <p className="font-medium">{label}</p>
+        <p className="mt-0.5 text-xs text-[color:var(--text-soft)]">
+          {count === 0 ? "Sin movimientos" : `${count} movimiento${count === 1 ? "" : "s"}`}
+          {period.isOngoing && " · en curso"}
+        </p>
+      </div>
+      <span className="figure text-sm">{formatCurrency(spentCents)}</span>
     </Link>
   );
 }

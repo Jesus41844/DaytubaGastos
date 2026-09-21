@@ -15,9 +15,11 @@ export default async function EditExpensePage({ params }: { params: Promise<{ id
   const boundDelete = deleteTransaction.bind(null, id);
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold">Editar movimiento</h1>
-      <Card className="max-w-lg">
+    <div className="flex flex-col gap-5">
+      <h1 className="font-[family-name:var(--font-display)] text-3xl font-extrabold tracking-tight">
+        Editar
+      </h1>
+      <Card>
         <TransactionForm
           action={boundUpdate}
           submitLabel="Guardar cambios"
@@ -30,12 +32,12 @@ export default async function EditExpensePage({ params }: { params: Promise<{ id
             notes: transaction.notes ?? "",
           }}
         />
-        <form action={boundDelete} className="mt-4 border-t border-zinc-200 pt-4">
-          <Button type="submit" variant="danger">
-            Eliminar movimiento
-          </Button>
-        </form>
       </Card>
+      <form action={boundDelete}>
+        <Button type="submit" variant="ghost" className="!text-[color:var(--coral)] px-0">
+          Borrar este movimiento
+        </Button>
+      </form>
     </div>
   );
 }
