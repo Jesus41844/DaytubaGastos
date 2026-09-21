@@ -21,7 +21,7 @@ export function computePersonalRecap(
   limitCents: number
 ): PersonalRecap {
   const spentCents = transactions
-    .filter((t) => t.category === "personal")
+    .filter((t) => t.category === "personal" && t.type === "expense")
     .reduce((sum, t) => sum + t.amountCents, 0);
   return { spentCents, limitCents, remainingCents: limitCents - spentCents };
 }

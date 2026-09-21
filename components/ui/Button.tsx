@@ -1,15 +1,15 @@
 import { clsx } from "clsx";
 import type { ButtonHTMLAttributes } from "react";
 
-type Variant = "primary" | "secondary" | "danger" | "ghost" | "onDeep";
+type Variant = "primary" | "secondary" | "danger" | "ghost";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-[color:var(--deep)] text-white hover:bg-[color:var(--deep-soft)]",
+  // Sobre fondo oscuro lo más brillante debe ser la acción principal.
+  primary: "bg-[color:var(--sea)] text-[color:var(--surface)] hover:brightness-110",
   secondary:
-    "bg-white text-[color:var(--text)] border border-[color:var(--line)] hover:border-[color:var(--deep)]",
-  danger: "bg-[color:var(--coral)] text-white hover:brightness-95",
+    "bg-[color:var(--card)] text-[color:var(--text)] border border-[color:var(--line)] hover:border-[color:var(--sea)]",
+  danger: "bg-[color:var(--coral)] text-[color:var(--surface)] hover:brightness-110",
   ghost: "text-[color:var(--text-soft)] hover:text-[color:var(--text)]",
-  onDeep: "bg-white text-[color:var(--deep)] hover:bg-white/90",
 };
 
 export function Button({
@@ -20,7 +20,7 @@ export function Button({
   return (
     <button
       className={clsx(
-        "inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none",
+        "inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all disabled:opacity-50 disabled:pointer-events-none",
         variants[variant],
         className
       )}

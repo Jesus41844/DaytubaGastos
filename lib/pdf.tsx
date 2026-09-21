@@ -1,6 +1,7 @@
 import { Document, Page, StyleSheet, Text, View, renderToBuffer } from "@react-pdf/renderer";
 import { periodLabel, type Period } from "./periods";
 import type { AgrupacionRecap, PersonalRecap } from "./recap";
+import type { SavingsInsights } from "./insights";
 import { formatCurrency } from "./money";
 
 export type PdfTransaction = {
@@ -41,7 +42,17 @@ const styles = StyleSheet.create({
   colType: { width: "14%" },
   colAmount: { width: "18%", textAlign: "right" },
   empty: { color: "#777", marginTop: 8 },
+  actionRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 5 },
+  actionTitle: { width: "72%" },
+  actionDetail: { color: "#555", fontSize: 9, marginTop: 1 },
+  actionAmount: { width: "28%", textAlign: "right", fontFamily: "Helvetica-Bold" },
+  note: { color: "#777", fontSize: 9, marginTop: 6 },
 });
+
+function savingsTitle(kind: string, label: string) {
+  if (kind === "reduce_to_best") return `Bajar "${label}" a lo que ya gastaste`;
+  return label;
+}
 
 function categoryLabel(category: string) {
   return category === "personal" ? "Personal" : "GREB";
@@ -56,11 +67,13 @@ function PeriodPdfDocument({
   transactions,
   personalRecap,
   agrupacionRecap,
+  insights,
 }: {
   period: Period;
   transactions: PdfTransaction[];
   personalRecap: PersonalRecap;
   agrupacionRecap: AgrupacionRecap;
+  insights: SavingsInsights;
 }) {
   return (
     <Document>
@@ -100,6 +113,30 @@ function PeriodPdfDocument({
           <Text style={styles.recapValue}>{formatCurrency(agrupacionRecap.balanceCents)}</Text>
         </View>
 
+        {insights.status === "ready" && insights.actions.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Cómo ahorrar la próxima quincena</Text>
+            {insights.actions.slice(0, 3).map((action) => (
+              <View style={styles.actionRow} key={action.id}>
+                <View style={styles.actionTitle}>
+                  <Text>{savingsTitle(action.kind, action.label)}</Text>
+                  <Text style={styles.actionDetail}>
+                    {action.evidence.occurrences > 0
+                      ? `${action.evidence.occurrences} veces en ${action.evidence.periodsPresent} de ${action.evidence.periodsAnalyzed} quincenas`
+                      : `Promedio ${formatCurrency(action.evidence.avgPerPeriodCents)} por quincena`}
+                  </Text>
+                </View>
+                <Text style={styles.actionAmount}>
+                  {formatCurrency(action.savingsPerPeriodCents)}
+                </Text>
+              </View>
+            ))}
+            <Text style={styles.note}>
+              Calculado sobre tus ultimas {insights.context.periodsAnalyzed} quincenas cerradas.
+            </Text>
+          </>
+        )}
+
         <Text style={styles.sectionTitle}>Movimientos</Text>
         {transactions.length === 0 ? (
           <Text style={styles.empty}>Sin movimientos registrados en este periodo.</Text>
@@ -133,6 +170,7 @@ export async function generatePeriodPdf(params: {
   transactions: PdfTransaction[];
   personalRecap: PersonalRecap;
   agrupacionRecap: AgrupacionRecap;
+  insights: SavingsInsights;
 }): Promise<Buffer> {
   return renderToBuffer(<PeriodPdfDocument {...params} />);
 }

@@ -21,7 +21,7 @@ export function PeriodCard({
   return (
     <Link
       href={`/periods/${period.id}`}
-      className="flex items-center justify-between rounded-xl border border-[color:var(--line)] bg-white px-5 py-4 transition-colors hover:border-[color:var(--deep)]"
+      className="flex items-center justify-between rounded-xl border border-[color:var(--line)] bg-[color:var(--card)] px-5 py-4 transition-colors hover:border-[color:var(--sea)]"
     >
       <div>
         <p className="font-medium">{label}</p>

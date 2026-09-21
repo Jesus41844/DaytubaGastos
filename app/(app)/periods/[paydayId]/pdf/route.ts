@@ -4,6 +4,7 @@ import { findPeriodById, isDateInPeriod } from "@/lib/periods";
 import { computeAgrupacionRecap, computePersonalRecap } from "@/lib/recap";
 import { getPersonalBudgetCents } from "@/lib/settings";
 import { generatePeriodPdf } from "@/lib/pdf";
+import { computeSavingsInsights } from "@/lib/insights";
 
 export async function GET(
   _request: Request,
@@ -25,11 +26,14 @@ export async function GET(
   const personalRecap = computePersonalRecap(periodTransactions, limitCents);
   const agrupacionRecap = computeAgrupacionRecap(periodTransactions);
 
+  const insights = computeSavingsInsights({ transactions, paydays, limitCents });
+
   const buffer = await generatePeriodPdf({
     period,
     transactions: periodTransactions,
     personalRecap,
     agrupacionRecap,
+    insights,
   });
 
   const filename = `quincena-${period.startDate ?? "inicio"}_${period.endDate ?? "hoy"}.pdf`;

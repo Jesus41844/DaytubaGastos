@@ -26,4 +26,4 @@ export function Field({
 }
 
 export const inputClass =
-  "w-full rounded-lg border border-[color:var(--line)] bg-white px-3 py-2.5 text-sm text-[color:var(--text)] placeholder:text-[color:var(--text-soft)] focus:border-[color:var(--deep)] focus:outline-none";
+  "w-full rounded-lg border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-2.5 text-sm text-[color:var(--text)] placeholder:text-[color:var(--text-soft)] focus:border-[color:var(--sea)] focus:outline-none";

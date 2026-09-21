@@ -13,11 +13,14 @@ export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   );
 }
 
-/** La losa verde profunda: el único bloque con peso visual de la página. */
+/** La losa: en oscuro es la superficie más clara de la página. */
 export function DeepCard({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={clsx("rounded-2xl bg-[color:var(--deep)] p-6 text-white sm:p-8", className)}
+      className={clsx(
+        "rounded-2xl border border-[color:var(--line)] bg-[color:var(--deep)] p-6 text-[color:var(--on-deep)] sm:p-8",
+        className
+      )}
       {...props}
     />
   );

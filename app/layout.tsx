@@ -23,6 +23,11 @@ export const metadata: Metadata = {
   description: "Cuánto te queda de la quincena",
 };
 
+// Tiñe la barra del navegador en el celular para que no corte con la app.
+export const viewport = {
+  themeColor: "#071310",
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html

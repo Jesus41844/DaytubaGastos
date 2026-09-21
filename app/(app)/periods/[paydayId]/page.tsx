@@ -57,7 +57,7 @@ export default async function PeriodDetailPage({
         </div>
         <a
           href={`/periods/${paydayId}/pdf`}
-          className="rounded-lg bg-[color:var(--deep)] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[color:var(--deep-soft)]"
+          className="rounded-lg bg-[color:var(--sea)] px-4 py-2.5 text-sm font-medium text-[color:var(--surface)] transition-all hover:brightness-110"
         >
           Bajar el PDF
         </a>

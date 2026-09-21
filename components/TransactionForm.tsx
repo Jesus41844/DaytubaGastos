@@ -36,8 +36,8 @@ function Choice({
       className={clsx(
         "flex-1 rounded-lg border px-3 py-2.5 text-sm transition-colors",
         active
-          ? "border-[color:var(--deep)] bg-[color:var(--deep)] text-white"
-          : "border-[color:var(--line)] bg-white text-[color:var(--text-soft)] hover:border-[color:var(--deep)]"
+          ? "border-[color:var(--sea)] bg-[color:var(--sea)] text-[color:var(--surface)]"
+          : "border-[color:var(--line)] bg-[color:var(--surface)] text-[color:var(--text-soft)] hover:border-[color:var(--sea)]"
       )}
     >
       {children}

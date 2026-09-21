@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="border-b border-[color:var(--line)] bg-white/80 backdrop-blur">
+      <header className="border-b border-[color:var(--line)] bg-[color:var(--surface)]/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 px-4 py-3">
           <Link
             href="/dashboard"

@@ -19,9 +19,9 @@ export function QuincenaMeter({
 
   if (recap.limitCents === 0) {
     return (
-      <div className="rounded-lg border border-white/20 p-4 text-sm text-white/70">
+      <div className="rounded-lg border border-[color:var(--line)] p-4 text-sm text-[color:var(--on-deep-soft)]">
         Pon tu límite de quincena en{" "}
-        <Link href="/settings" className="text-white underline underline-offset-4">
+        <Link href="/settings" className="text-[color:var(--sea)] underline underline-offset-4">
           Ajustes
         </Link>{" "}
         y aquí vas a ver cuánto te queda.
@@ -50,17 +50,17 @@ export function QuincenaMeter({
       </div>
 
       <div className="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-        <p className="text-sm text-white/70">
-          Llevas <span className="figure text-white">{formatCurrency(recap.spentCents)}</span> de{" "}
-          <span className="figure text-white">{formatCurrency(recap.limitCents)}</span>
+        <p className="text-sm text-[color:var(--on-deep-soft)]">
+          Llevas <span className="figure text-[color:var(--on-deep)]">{formatCurrency(recap.spentCents)}</span> de{" "}
+          <span className="figure text-[color:var(--on-deep)]">{formatCurrency(recap.limitCents)}</span>
         </p>
         {progress ? (
-          <p className="eyebrow !text-white/60">
+          <p className="eyebrow !text-[color:var(--on-deep-soft)]">
             Día {progress.dayNumber} de {progress.totalDays}
           </p>
         ) : (
-          <p className="text-sm text-white/60">
-            <Link href="/calendar" className="text-white underline underline-offset-4">
+          <p className="text-sm text-[color:var(--on-deep-soft)]">
+            <Link href="/calendar" className="text-[color:var(--sea)] underline underline-offset-4">
               Marca tu próximo cobro
             </Link>{" "}
             para ver el ritmo
@@ -69,8 +69,8 @@ export function QuincenaMeter({
       </div>
 
       {perDayCents !== null && (
-        <p className="mt-4 border-t border-white/15 pt-4 text-sm text-white/70">
-          Te quedan <span className="figure text-white">${formatAmount(perDayCents)}</span> por día
+        <p className="mt-4 border-t border-[color:var(--line)] pt-4 text-sm text-[color:var(--on-deep-soft)]">
+          Te quedan <span className="figure text-[color:var(--on-deep)]">${formatAmount(perDayCents)}</span> por día
           {progress && progress.daysLeft > 1 ? ` durante ${progress.daysLeft} días` : " para hoy"}.
         </p>
       )}

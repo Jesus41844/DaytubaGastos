@@ -28,7 +28,7 @@ export default async function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       <DeepCard>
-        <p className="eyebrow !text-white/60">
+        <p className="eyebrow !text-[color:var(--on-deep-soft)]">
           {period.isUnassigned
             ? "Sin quincena marcada"
             : `Quincena · ${formatDayMonth(period.startDate as string)} — ${
@@ -36,9 +36,9 @@ export default async function DashboardPage() {
               }`}
         </p>
 
-        <p className="mt-6 text-sm text-white/70">{overspent ? "Te pasaste por" : "Te queda"}</p>
+        <p className="mt-6 text-sm text-[color:var(--on-deep-soft)]">{overspent ? "Te pasaste por" : "Te queda"}</p>
         <p className="font-[family-name:var(--font-display)] text-6xl leading-none font-extrabold tracking-tight sm:text-7xl">
-          <span className="align-top text-3xl font-bold text-white/50 sm:text-4xl">$</span>
+          <span className="align-top text-3xl font-bold text-[color:var(--on-deep-soft)] sm:text-4xl">$</span>
           {formatAmount(Math.abs(personal.remainingCents))}
         </p>
 
@@ -49,7 +49,7 @@ export default async function DashboardPage() {
 
       <Link
         href="/expenses/new"
-        className="flex items-center justify-center gap-2 rounded-xl bg-[color:var(--deep)] px-5 py-4 text-center font-medium text-white transition-colors hover:bg-[color:var(--deep-soft)]"
+        className="flex items-center justify-center gap-2 rounded-xl bg-[color:var(--sea)] px-5 py-4 text-center font-medium text-[color:var(--surface)] transition-all hover:brightness-110"
       >
         <span aria-hidden className="text-lg leading-none">
           +
